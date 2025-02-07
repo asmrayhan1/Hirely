@@ -6,10 +6,7 @@ final signupProvider = StateNotifierProvider<SignupController, SignupGenerics> (
 class SignupController extends StateNotifier<SignupGenerics> {
   SignupController() : super(SignupGenerics());
 
-  Future<void> updateStatus({
-    required bool isEmail, required bool isPassword, required bool isName,
-    required bool isConfirmPassword, required bool isPhone
-  }) async {
-    state = state.update(isName: isName, isConfirmPassword: isConfirmPassword, isPhone: isPhone, isEmail: isEmail, isPassword: isPassword);
+  Future<void> updateStatus({required bool isEmail, required bool isPassword, required bool isConfirmPassword}) async {
+    state = state.update(isConfirmPassword: isConfirmPassword, isEmail: isEmail, isPassword: isPassword);
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hirely/feature/dashboard/view/recruiter/recruiter_dashboard.dart';
+import 'package:hirely/feature/dashboard/view/talent/talent_dashboard.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../feature/auth/login/view/login_screen.dart';
 import '../../home.dart';
@@ -21,7 +23,7 @@ class AuthGate extends StatelessWidget {
           // check if there is a valid session currently
           final session = snapshot.hasData? snapshot.data!.session : null;
           if (session != null){
-            return (AuthService().getCurrentUserEmail() == "rc295908@gmail.com" ? Home():Home());//AdminDashboard() : UserDashboard());
+            return (AuthService().getCurrentUserRole() == true ? RecruiterDashboard() : TalentDashboard());
           } else {
             return LoginScreen();
           }

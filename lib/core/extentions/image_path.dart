@@ -1,7 +1,7 @@
 class ImagePath {
   static String logo = "assets/images/logo/app_logo.png";
   static String app_logo = "assets/images/logo/app_logo.png";
-  static String appbar_logo = "assets/images/logo/appbar_logo.png";
+  static String appbar_logo = "assets/images/logo/app_h.png";
 
   // User
   static String user_image = "assets/images/icon/user_image.png";

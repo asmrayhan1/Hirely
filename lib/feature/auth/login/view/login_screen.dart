@@ -1,7 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hirely/feature/dashboard/view/recruiter/recruiter_dashboard.dart';
+import 'package:hirely/feature/dashboard/view/talent/talent_dashboard.dart';
 import '../../../../core/extentions/image_path.dart';
+import '../../../../core/service/auth_service.dart';
 import '../../../../core/validation/validation.dart';
 import '../../../../home.dart';
 import '../../../../shared/containers/custom_button.dart';
@@ -11,8 +14,6 @@ import '../../../../shared/text_field/custom_text_field.dart';
 import '../../../../shared/widgets/utils/toast.dart';
 import '../../register/view/signup_screen.dart';
 import '../view_model/controller/login_controller.dart';
-
-bool? isAdmin;
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -76,8 +77,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               const SizedBox(height: 26.73),
               GestureDetector(
                 onTap: () async {
-                  ref.read(loginProvider.notifier).updateStatus(
-                      isEmail: true, isPassword: true);
+                  ref.read(loginProvider.notifier).updateStatus(isEmail: true, isPassword: true);
                   if (!isEmail) {
                     Toast.showToast(context: context,
                         message: "Invalid Email Address!",
@@ -87,40 +87,35 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         message: "Invalid Password!",
                         isWarning: true);
                   } else {
-                    //   try {
-                    //     final response = await AuthService().signInWIthEmailPassword(_email, _password);
-                    //     if (kDebugMode) {
-                    //       print(response);
-                    //     }
-                    //     if (_email == "rc295908@gmail.com"){
-                    //       isAdmin = true;
-                    //       Navigator.of(context).pushReplacement(
-                    //         MaterialPageRoute(
-                    //           builder: (context) => const AdminDashboard(),
-                    //         ),
-                    //       );
-                    //       Toast.showToast(context: context, message: "Successfully Login");
-                    //     } else {
-                    //       isAdmin = false;
-                    //       Navigator.of(context).pushReplacement(
-                    //         MaterialPageRoute(
-                    //           builder: (context) => const UserDashboard(),
-                    //         ),
-                    //       );
-                    //       Toast.showToast(context: context, message: "Successfully Login");
-                    //     }
-                    //   } catch (e) {
-                    //     Toast.showToast(context: context, message: "e", isWarning: true);
-                    //     if (kDebugMode) {
-                    //       print("Login: $e");
-                    //     }
-                    //   }
-                    // }
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => Home()));
-                    if (kDebugMode) {
-                      print("Login Button Working, $isEmail $isPassword ");
+                    try {
+                      final response = await AuthService().signInWIthEmailPassword(_email, _password);
+                      if (kDebugMode) {
+                        print(response);
+                      }
+                      if (response.user?.appMetadata['role']){
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => const RecruiterDashboard(),
+                          ),
+                        );
+                        Toast.showToast(context: context, message: "Successfully Login");
+                      } else {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => const TalentDashboard(),
+                          ),
+                        );
+                        Toast.showToast(context: context, message: "Successfully Login");
+                      }
+                    } catch (e) {
+                      Toast.showToast(context: context, message: "e", isWarning: true);
+                      if (kDebugMode) {
+                        print("Login: $e");
+                      }
                     }
+                  }
+                  if (kDebugMode) {
+                    print("Login Button Working, $isEmail $isPassword ");
                   }
                 },
                 child: const CustomButton(
@@ -133,7 +128,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
               const SizedBox(height: 8.37),
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     children: [
@@ -146,12 +141,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                     ],
                   ),
-                  // GestureDetector(
-                  //     onTap: (){
-                  //
-                  //     },
-                  //     child: Text("Forget Password?", style: TextStyle(fontSize: 12.56, fontWeight: FontWeight.w400))
-                  // ),
+                  GestureDetector(
+                      onTap: (){
+
+                      },
+                      child: Text("Forget Password?", style: TextStyle(fontSize: 12.56, fontWeight: FontWeight.w400))
+                  ),
                 ],
               ),
               SizedBox(height: 40),

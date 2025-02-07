@@ -1,6 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hirely/core/service/auth_service.dart';
+import 'package:hirely/feature/dashboard/view/recruiter/recruiter_dashboard.dart';
+import 'package:hirely/feature/dashboard/view/talent/talent_dashboard.dart';
 import '../../../../core/extentions/image_path.dart';
 import '../../../../core/validation/validation.dart';
 import '../../../../home.dart';
@@ -24,33 +27,16 @@ class SignupScreen extends ConsumerStatefulWidget {
 }
 
 class _SignUpState extends ConsumerState<SignupScreen> {
-  bool isName = false, isPhone = false, isEmail = false, isPassword = false, isConfirmPassword = false;
-  String _name = "", _phone = "", _email = "", _password = "", _confirmPassword = "";
+  bool isEmail = false, isPassword = false, isConfirmPassword = false;
+  bool isClicked1 = false, isClicked2 = false;
+  String _email = "", _password = "", _confirmPassword = "";
 
-  void _onName(String name, BuildContext context) {
-    setState(() {
-      _name = name;
-      isName = Validation.nameValidity(name: name, context: context);
-      late final status = ref.watch(signupProvider);
-      ref.read(signupProvider.notifier).updateStatus(isEmail: status.isEmail, isPassword: status.isPassword, isName: false, isConfirmPassword: status.isConfirmPassword, isPhone: status.isPhone);
-    });
-  }
-
-  void _onPhone(String phone, BuildContext context) {
-    setState(() {
-      _phone = phone;
-      isPhone = Validation.phoneValidity(phone: phone, context:  context);
-      late final status = ref.watch(signupProvider);
-      ref.read(signupProvider.notifier).updateStatus(isEmail: status.isEmail, isPassword: status.isPassword, isName: status.isName, isConfirmPassword: status.isConfirmPassword, isPhone: false
-      );
-    });
-  }
   void _onEmail(String email, BuildContext context) {
     setState(() {
       _email = email;
       isEmail = Validation.emailValidity(email: email, context: context);
       late final status = ref.watch(signupProvider);
-      ref.read(signupProvider.notifier).updateStatus(isEmail: false, isPassword: status.isPassword, isName: status.isName, isConfirmPassword: status.isConfirmPassword, isPhone: status.isPhone);
+      ref.read(signupProvider.notifier).updateStatus(isEmail: false, isPassword: status.isPassword, isConfirmPassword: status.isConfirmPassword);
     });
   }
   void _onPassword(String password, BuildContext context) {
@@ -58,7 +44,7 @@ class _SignUpState extends ConsumerState<SignupScreen> {
       _password = password;
       isPassword = Validation.passwordValidity(password: password, context: context);
       late final status = ref.watch(signupProvider);
-      ref.read(signupProvider.notifier).updateStatus(isEmail: status.isEmail, isPassword: false, isName: status.isName, isConfirmPassword: status.isConfirmPassword, isPhone: status.isPhone);
+      ref.read(signupProvider.notifier).updateStatus(isEmail: status.isEmail, isPassword: false, isConfirmPassword: status.isConfirmPassword);
     });
   }
   void _onConfirmPassword(String password, BuildContext context) {
@@ -66,11 +52,10 @@ class _SignUpState extends ConsumerState<SignupScreen> {
       _confirmPassword = password;
       isConfirmPassword = Validation.passwordValidity(password: password, context: context);
       late final status = ref.watch(signupProvider);
-      ref.read(signupProvider.notifier).updateStatus(isEmail: status.isEmail, isPassword: status.isPassword, isName: status.isName, isConfirmPassword: false, isPhone: status.isPhone);
+      ref.read(signupProvider.notifier).updateStatus(isEmail: status.isEmail, isPassword: status.isPassword, isConfirmPassword: false);
     });
   }
-   bool isClicked1 = false;
-   bool isClicked2 = false;
+
   void _isClicked(int op){
     setState(() {
       if (op == 1) {
@@ -103,10 +88,6 @@ class _SignUpState extends ConsumerState<SignupScreen> {
                 ),
               ),
               const SizedBox(height: 20.59),
-              SizedBox(height: 63, child: CustomTextField(hintText: "Name", borderColor: (!isName && status.isName)? Colors.red : Colors.white60, context: context, onSubmittedValue: _onName, iconUrl: ImagePath.user)),
-              const SizedBox(height: 16.74),
-              SizedBox(height: 63, child: CustomTextField(hintText: "Phone", borderColor: (!isPhone && status.isPhone)? Colors.red : Colors.white60, context: context, onSubmittedValue: _onPhone, iconUrl: ImagePath.phone)),
-              const SizedBox(height: 16.74),
               SizedBox(height: 63, child: CustomTextField(hintText: "Email", borderColor: (!isEmail && status.isEmail)? Colors.red : Colors.white60, context: context, onSubmittedValue: _onEmail, iconUrl: ImagePath.email)),
               const SizedBox(height: 16.74),
               SizedBox(height: 63, child: CustomPasswordField(hintText: "Password", borderColor: (!isPassword && status.isPassword)? Colors.red : Colors.white60, context: context, onSubmittedValue: _onPassword, iconUrl: ImagePath.lock)),
@@ -140,12 +121,8 @@ class _SignUpState extends ConsumerState<SignupScreen> {
               const SizedBox(height: 30.73),
               GestureDetector(
                 onTap: () async {
-                  ref.read(signupProvider.notifier).updateStatus(isName: true, isConfirmPassword: true, isPhone: true, isEmail: true, isPassword: true);
-                  if (!isName){
-                    Toast.showToast(context: context, message: "Invalid Name!", isWarning: true);
-                  } else if (!isPhone){
-                    Toast.showToast(context: context, message: "Invalid Phone number", isWarning: true);
-                  } else if (!isEmail){
+                  ref.read(signupProvider.notifier).updateStatus(isConfirmPassword: true, isEmail: true, isPassword: true);
+                  if (!isEmail){
                     Toast.showToast(context: context, message: "Invalid Email format!", isWarning: true);
                   } else if (!isPassword){
                     Toast.showToast(context: context, message: "Password at least contains 6 characters!", isWarning: true);
@@ -153,40 +130,27 @@ class _SignUpState extends ConsumerState<SignupScreen> {
                     Toast.showToast(context: context, message: "Password at least contains 6 characters!", isWarning: true);
                   } else if (_password != _confirmPassword){
                     Toast.showToast(context: context, message: "Password & Confirmed Password not matched!", isWarning: true);
-                  } else if (!isClicked1 || !isClicked2 || (isClicked1 && isClicked2)){
+                  } else if (!isClicked1 && !isClicked2){
                     Toast.showToast(context: context, message: "Please select your role!", isWarning: true);
                   } else {
                     try {
-                      // await authService.signUpWIthEmailPassword(_email, _password);
-                      //
-                      // setState(() {
-                      //   insertName = _name;
-                      //   insertPhone = _phone;
-                      //   insertEmail = _email;
-                      // });
-                      //   Toast.showToast(context: context,
-                      //       message: "Registered Successfully!");
-                      //   if (_email == "rc295908@gmail.com") {
-                      //     isAdmin = true;
-                      //     Navigator.of(context).pushReplacement(
-                      //       MaterialPageRoute(
-                      //         builder: (context) => const AdminDashboard(),
-                      //       ),
-                      //     );
-                      //     Toast.showToast(
-                      //         context: context, message: "Successfully Login");
-                      //   } else {
-                      //     isAdmin = false;
-                      //     Navigator.of(context).pushReplacement(
-                      //       MaterialPageRoute(
-                      //         builder: (context) => const UserDashboard(),
-                      //       ),
-                      //     );
-                      //     Toast.showToast(
-                      //         context: context, message: "Successfully Login");
-                      //   }
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) => Home()));
+                      final response = await AuthService().signUpWIthEmailPassword(isClicked1, _email, _password);
+                      Toast.showToast(context: context, message: "Registered Successfully!");
+                      if (response.user?.appMetadata['role']) {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => const RecruiterDashboard(),
+                          ),
+                        );
+                        Toast.showToast(context: context, message: "Successfully Login");
+                      } else {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => const TalentDashboard(),
+                          ),
+                        );
+                        Toast.showToast(context: context, message: "Successfully Login");
+                      }
                     } catch (e) {
                       if (kDebugMode) {
                         print(e);
@@ -195,7 +159,7 @@ class _SignUpState extends ConsumerState<SignupScreen> {
                     }
                   }
                   if (kDebugMode) {
-                    print("SignUp Button Working. $isName $isConfirmPassword $isPhone  $isEmail $isPassword");
+                    print("SignUp Button Working. $isConfirmPassword $isEmail $isPassword");
                   }
                 },
                 child: const CustomButton(

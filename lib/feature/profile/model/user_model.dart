@@ -24,8 +24,8 @@ class UserModel {
       name: json['name'] ?? '',
       phone: json['phone'] ?? '',
       imgUrl: json['img_url'] ?? '',
-      bio: json['bio'] ?? 'No bio found!',
-      address: json['address'] ?? 'No address found!',
+      bio: json['bio'] ?? '',
+      address: json['address'] ?? '',
     );
   }
 

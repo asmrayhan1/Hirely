@@ -10,11 +10,13 @@ class AuthService {
     );
   }
 
-  Future<AuthResponse> signUpWIthEmailPassword (String email, String password) async {
+  Future<AuthResponse> signUpWIthEmailPassword (bool role, String email, String password) async {
     return await _supabase.auth.signUp(
         email: email,
         password: password,
-        emailRedirectTo: 'http://localhost:3000',
+        data: {
+          'role' : role
+        },
     );
   }
 
@@ -26,5 +28,11 @@ class AuthService {
     final session = _supabase.auth.currentSession;
     final user = session?.user;
     return user?.email;
+  }
+
+  bool? getCurrentUserRole(){
+    final session = _supabase.auth.currentSession;
+    final user = session?.user.appMetadata['role'];
+    return user;
   }
 }
