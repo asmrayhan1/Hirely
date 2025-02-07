@@ -32,7 +32,7 @@ class AuthService {
 
   bool? getCurrentUserRole(){
     final session = _supabase.auth.currentSession;
-    final user = session?.user.appMetadata['role'];
+    final user = session?.user.userMetadata!['role'];
     return user;
   }
 }

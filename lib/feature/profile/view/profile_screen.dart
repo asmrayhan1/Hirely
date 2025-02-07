@@ -48,7 +48,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
         ],
       ),
-      body: user.isLoading? CircularProgressIndicator() : SingleChildScrollView(
+      body: user.isLoading? Center(child: CircularProgressIndicator()) : SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(height: 20),
@@ -67,7 +67,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         fit: BoxFit.cover,
                         height: 130,
                         width: 135,
-                        "https://dkcsxccdmdunftexgdkc.supabase.co/storage/v1/object/public/${user.users?.imgUrl}",
+                        "https://cldryweohlzpfeteqesz.supabase.co/storage/v1/object/public/${user.users?.imgUrl}",
                       ),
                     ),
                   ),

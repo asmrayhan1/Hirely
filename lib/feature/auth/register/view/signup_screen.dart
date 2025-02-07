@@ -136,7 +136,7 @@ class _SignUpState extends ConsumerState<SignupScreen> {
                     try {
                       final response = await AuthService().signUpWIthEmailPassword(isClicked1, _email, _password);
                       Toast.showToast(context: context, message: "Registered Successfully!");
-                      if (response.user?.appMetadata['role']) {
+                      if (AuthService().getCurrentUserRole() == true) {
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
                             builder: (context) => const RecruiterDashboard(),

@@ -49,14 +49,6 @@ class _EditInfoScreenState extends ConsumerState<EditInfoScreen> {
     });
   }
   File? _image;
-  void _resetForm(){
-    setState(() {
-      _image = null;
-      _name = _bio = _phone = _address = "";
-      isName = isBio = isPhone = isAddress = false;
-      _nameController.clear(); _bioController.clear(); _phoneController.clear(); _addressController.clear();
-    });
-  }
 
   // Function to pick an image
   Future<void> _pickImage() async {
@@ -73,8 +65,24 @@ class _EditInfoScreenState extends ConsumerState<EditInfoScreen> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((t) {
+      final user = ref.watch(userProvider).users;
+      if (user != null){
+        setState(() {
+          isName = isBio = isAddress = isPhone = true;
+          _name = user.name!; _phone = user.phone!; _bio = user.bio!; _address = user.address!;
+          _nameController.text = _name; _phoneController.text = _phone; _addressController.text = _address; _bioController.text = _bio;
+        });
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final status = ref.watch(userProvider);
+    final status = ref.watch(userProvider).users;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xffF2F6FB),
@@ -107,11 +115,19 @@ class _EditInfoScreenState extends ConsumerState<EditInfoScreen> {
             children: [
               // Display the picked image in a square container
               _image == null ? Center(
-                child: Container(
+                child: status?.imgUrl == null ? Container(
                   width: 200,
                   height: 200,
                   color: Colors.grey[200], // Placeholder when no image is selected
                   child: Center(child: Text("No Image")),
+                ) : SizedBox(
+                  width: 200,
+                  height: 200,
+                  child: ClipRRect(
+                    child: Image.network(
+                        "https://cldryweohlzpfeteqesz.supabase.co/storage/v1/object/public/${status?.imgUrl}"
+                    ),
+                  ),
                 ),
               ) : Center(
                 child: Container(
@@ -157,15 +173,7 @@ class _EditInfoScreenState extends ConsumerState<EditInfoScreen> {
               SizedBox(height: 5),
               CustomField(maxLine: 1, controller: _addressController, context: context, hintTxt: "Address", onSubmittedValue: _onAddress),
               SizedBox(height: 40),
-              Center(
-                child: GestureDetector(
-                  onTap: (){
-                    _resetForm();
-                  },
-                  child: CustomContainer(fntWeight: FontWeight.w600, fntSize: 16, txt: "Clear", containerColor: Colors.blueGrey, containerWidth: MediaQuery.of(context).size.width - 40, containerHeight: 45)
-                )
-              ),
-              SizedBox(height: 10),
+
               Center(
                   child: GestureDetector(
                       onTap: () async {
@@ -177,14 +185,17 @@ class _EditInfoScreenState extends ConsumerState<EditInfoScreen> {
                           Toast.showToast(context: context, message: "Invalid Phone Number!", isWarning: true);
                         } else if (!isAddress){
                           Toast.showToast(context: context, message: "Invalid Address!", isWarning: true);
-                        } else if (_image == null) {
-                          Toast.showToast(context: context, message: "Upload an Image!", isWarning: true);
                         } else {
                           bool isUpdated = await ref.read(userProvider.notifier).updateUser(name: _name, phone: _phone, bio: _bio, imgFile: _image, address: _address);
-                          _resetForm();
+                          if (isUpdated){
+                            Toast.showToast(context: context, message: "Profile Updated Successfully");
+                            Navigator.of(context).pop();
+                          } else {
+                            Toast.showToast(context: context, message: "Server Error", isWarning: true);
+                          }
                         }
                       },
-                      child:  CustomContainer(status: status.isLoading? true : false, fntWeight: FontWeight.w600, fntSize: 16, txt: "Save", containerColor: Color(0xff188273), containerWidth: MediaQuery.of(context).size.width - 40, containerHeight: 45)
+                      child:  CustomContainer(status: ref.watch(userProvider).isLoading ? true : false, fntWeight: FontWeight.w600, fntSize: 16, txt: "Save", containerColor: Color(0xff188273), containerWidth: MediaQuery.of(context).size.width - 40, containerHeight: 45)
                   )
               ),
               SizedBox(height: 40),

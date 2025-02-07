@@ -90,9 +90,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     try {
                       final response = await AuthService().signInWIthEmailPassword(_email, _password);
                       if (kDebugMode) {
-                        print(response);
+                        print("Login response = ${response.user!.userMetadata!['role']}");
                       }
-                      if (response.user?.appMetadata['role']){
+                      if (AuthService().getCurrentUserRole() == true){
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
                             builder: (context) => const RecruiterDashboard(),

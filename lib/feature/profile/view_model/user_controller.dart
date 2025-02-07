@@ -37,6 +37,10 @@ class UserController extends StateNotifier<UserGenerics> {
     String imgUrl = "";
 
     state = state.update(isLoading: true);
+    if (state.users != null && state.users!.imgUrl!.isNotEmpty){
+      imgUrl = state.users!.imgUrl!;
+    }
+
     if (imgFile != null) {
       final String fileName = '${DateTime.now().millisecondsSinceEpoch}.png';
 
@@ -53,8 +57,12 @@ class UserController extends StateNotifier<UserGenerics> {
 
     UserModel user = UserModel(email: authService.getCurrentUserEmail().toString(), name: name, phone: phone, imgUrl: imgUrl, bio: bio, address: address);
     try {
-      final response = await supabase.from('users').update(user.toJson()).eq('email', authService.getCurrentUserEmail().toString());
-
+      late final response;
+      if (state.users != null && state.users!.imgUrl!.isNotEmpty){
+        response = await supabase.from('users').update(user.toJson()).eq('email', authService.getCurrentUserEmail().toString());
+      } else {
+        response = await supabase.from('users').upsert(user.toJson()).eq('email', authService.getCurrentUserEmail().toString());
+      }
       await userInitialize();
 
       if (kDebugMode) {
