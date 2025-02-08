@@ -38,6 +38,7 @@ dependencies:
   supabase_flutter: ^2.8.3
   image_picker: ^1.1.2
   http: ^1.2.2
+  timeago: ^3.0.0
 
 dev_dependencies:
   flutter_test:

@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hirely/feature/home/view/home_screen.dart';
+import 'package:hirely/feature/post/view/create_post.dart';
 
 import '../../../../home.dart';
 import '../../../profile/view/profile_screen.dart';
@@ -28,7 +30,8 @@ class _RecruiterDashboardState extends ConsumerState<RecruiterDashboard> {
     // AdminHomeScreen(),
     // AddProduct(),
     // AdminShopScreen(),
-    Home(),
+    HomeScreen(),
+    CreatePost(),
     ProfileScreen()
   ];
 
@@ -65,10 +68,10 @@ class _RecruiterDashboardState extends ConsumerState<RecruiterDashboard> {
             icon: Icon(CupertinoIcons.home, size: 25),
             label: 'Home',
           ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(CupertinoIcons.add),
-          //   label: 'Add',
-          // ),
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.add),
+            label: 'Create',
+          ),
           // BottomNavigationBarItem(
           //   icon: Icon(CupertinoIcons.shopping_cart),
           //   label: 'Cart',
