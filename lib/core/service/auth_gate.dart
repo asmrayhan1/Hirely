@@ -3,7 +3,6 @@ import 'package:hirely/feature/dashboard/view/recruiter/recruiter_dashboard.dart
 import 'package:hirely/feature/dashboard/view/talent/talent_dashboard.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../feature/auth/login/view/login_screen.dart';
-import '../../home.dart';
 import 'auth_service.dart';
 
 class AuthGate extends StatelessWidget {

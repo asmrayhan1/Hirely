@@ -47,10 +47,12 @@ class _EditPostState extends ConsumerState<EditPost> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    setState(() {
-      final tmp = ref.watch(jobProvider).jobs![widget.index];
-      _title = tmp.title; _about = tmp.about; _requirements = tmp.requirement; _salary = tmp.salary;
-      _titleController.text = _title; _aboutController.text = _about; _requirementController.text = _requirements; _salaryController.text = _salary;
+    WidgetsBinding.instance.addPostFrameCallback((t) {
+      setState(() {
+        final tmp = ref.watch(jobProvider).jobs![widget.index];
+        _title = tmp.title; _about = tmp.about; _requirements = tmp.requirement; _salary = tmp.salary;
+        _titleController.text = _title; _aboutController.text = _about; _requirementController.text = _requirements; _salaryController.text = _salary;
+      });
     });
   }
 
@@ -116,7 +118,7 @@ class _EditPostState extends ConsumerState<EditPost> {
                     } else if (_salary.isEmpty){
                       Toast.showToast(context: context, message: "Salary field can't empty!", isWarning: true);
                     } else {
-                      bool isUpdated = await ref.read(jobProvider.notifier).updateJob(id: widget.id, title: _title, about: _about, requirement: _requirements, salary: _title, userName: user!.name!, img: user.imgUrl!);
+                      bool isUpdated = await ref.read(jobProvider.notifier).updateJob(id: widget.id, title: _title, about: _about, requirement: _requirements, salary: _salary, userName: user!.name!, img: user.imgUrl!);
                       if (isUpdated){
                         Toast.showToast(context: context, message: "Update Successfully Added!");
                         Navigator.of(context).pop();

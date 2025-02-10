@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:hirely/core/service/auth_service.dart';
 
 import '../../core/extentions/image_path.dart';
 import '../../feature/auth/login/view/login_screen.dart';
@@ -21,9 +22,10 @@ class _LogoutState extends State<Logout> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
-      onSelected: (value) {
+      onSelected: (value) async {
         if (value == 1){
           Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoginScreen()));
+          await AuthService().signOUt();
         }
         if (kDebugMode) {
           print("Selected: $value");

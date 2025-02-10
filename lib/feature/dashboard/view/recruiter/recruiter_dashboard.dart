@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hirely/feature/home/view/home_screen.dart';
+import 'package:hirely/feature/my_post/view/my_post.dart';
 import 'package:hirely/feature/post/view/create_post.dart';
 import '../../../post/view_model/job_controller.dart';
 import '../../../profile/view/profile_screen.dart';
@@ -29,6 +30,7 @@ class _RecruiterDashboardState extends ConsumerState<RecruiterDashboard> {
   static const List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
     CreatePost(),
+    MyPost(),
     ProfileScreen()
   ];
 
@@ -68,8 +70,12 @@ class _RecruiterDashboardState extends ConsumerState<RecruiterDashboard> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.add),
+            icon: Icon(CupertinoIcons.add, size: 25),
             label: 'Create',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list_alt_rounded, size: 25),
+            label: 'Careers',
           ),
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.person, size: 25),
