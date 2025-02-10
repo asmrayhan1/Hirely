@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1029581416818",
+    "project_id": "hirely-a22da",
+    "storage_bucket": "hirely-a22da.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1029581416818:android:23893fc0ad20a3ee2d95eb",
+        "android_client_info": {
+          "package_name": "com.example.hirely"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZ1vPTBBUfXfqjgjo9tCLdAcMGArQnek8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
