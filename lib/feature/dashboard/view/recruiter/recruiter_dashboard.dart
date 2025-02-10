@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hirely/feature/home/view/home_screen.dart';
 import 'package:hirely/feature/post/view/create_post.dart';
-
-import '../../../../home.dart';
+import '../../../post/view_model/job_controller.dart';
 import '../../../profile/view/profile_screen.dart';
+import '../../../profile/view_model/user_controller.dart';
 
 class RecruiterDashboard extends ConsumerStatefulWidget {
   const RecruiterDashboard({super.key});
@@ -27,16 +27,15 @@ class _RecruiterDashboardState extends ConsumerState<RecruiterDashboard> {
   }
 
   static const List<Widget> _widgetOptions = <Widget>[
-    // AdminHomeScreen(),
-    // AddProduct(),
-    // AdminShopScreen(),
     HomeScreen(),
     CreatePost(),
     ProfileScreen()
   ];
 
   Future<void> _refreshData() async {
-    await Future.delayed(Duration(seconds: 1));
+    await ref.read(userProvider.notifier).userInitialize();
+    await ref.read(jobProvider.notifier).jobInitialize();
+    await Future.delayed(Duration(milliseconds: 200));
   }
 
   @override
@@ -65,17 +64,13 @@ class _RecruiterDashboardState extends ConsumerState<RecruiterDashboard> {
         ),
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.home, size: 25),
+            icon: Icon(Icons.home_filled, size: 25),
             label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.add),
             label: 'Create',
           ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(CupertinoIcons.shopping_cart),
-          //   label: 'Cart',
-          // ),
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.person, size: 25),
             label: 'Profile',

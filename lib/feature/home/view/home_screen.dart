@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hirely/feature/home/view/details_screen.dart';
+import 'package:hirely/feature/home/view_model/apply_job_controller.dart';
 import 'package:hirely/feature/post/view_model/job_controller.dart';
 
 import '../../../core/extentions/image_path.dart';
 import '../../../shared/containers/custom_image.dart';
-import '../../../shared/model/color_model.dart';
 import '../../profile/view_model/user_controller.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -23,6 +23,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((t) {
       ref.read(userProvider.notifier).userInitialize();
       ref.read(jobProvider.notifier).jobInitialize();
+      ref.read(applyProvider.notifier).applyInitialize();
     });
   }
   @override
@@ -43,7 +44,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ],
         ),
       ),
-      body: Padding(
+      body: home == null? Column(children: [],) : Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: SingleChildScrollView(
           child: Column(

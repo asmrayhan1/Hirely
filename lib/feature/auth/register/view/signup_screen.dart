@@ -6,7 +6,6 @@ import 'package:hirely/feature/dashboard/view/recruiter/recruiter_dashboard.dart
 import 'package:hirely/feature/dashboard/view/talent/talent_dashboard.dart';
 import '../../../../core/extentions/image_path.dart';
 import '../../../../core/validation/validation.dart';
-import '../../../../home.dart';
 import '../../../../shared/containers/custom_button.dart';
 import '../../../../shared/containers/custom_image.dart';
 import '../../../../shared/text_field/custom_password_field.dart';

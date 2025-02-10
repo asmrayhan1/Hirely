@@ -22,6 +22,14 @@ class Validation {
       return true;
     }
   }
+  static bool phone({required String? phone}){
+    final phoneRegex = RegExp(r'^01[7|6|3|8|9|5]\d{8}$');
+    if (phone == null || phone.isEmpty || phone.length != 11 || !phoneRegex.hasMatch(phone)){
+      return false;
+    } else {
+      return true;
+    }
+  }
 
   static bool addressValidity({required String? address, required BuildContext context}){
     if (address == null || address.isEmpty || address.length < 10){
@@ -36,6 +44,15 @@ class Validation {
     final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
     if (email == null || email.isEmpty || !emailRegex.hasMatch(email)){
       Toast.showToast(context: context, message: "Invalid Email format!", isWarning: true);
+      return false;
+    }  else {
+      return true;
+    }
+  }
+
+  static bool email({required String? email}){
+    final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+    if (email == null || email.isEmpty || !emailRegex.hasMatch(email)){
       return false;
     }  else {
       return true;

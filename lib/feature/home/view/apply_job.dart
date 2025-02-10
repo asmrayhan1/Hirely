@@ -1,63 +1,55 @@
-import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hirely/feature/home/view_model/apply_job_controller.dart';
 import 'package:hirely/shared/widgets/utils/toast.dart';
-
+import '../../../core/validation/validation.dart';
 import '../../../shared/containers/custom_container.dart';
+import '../components/job_field.dart';
 
 class ApplyJob extends ConsumerStatefulWidget {
-  const ApplyJob({super.key});
+  final int jobId;
+  const ApplyJob({super.key, required this.jobId});
 
   @override
   ConsumerState<ApplyJob> createState() => _ApplyJobState();
 }
 
 class _ApplyJobState extends ConsumerState<ApplyJob> {
+  String _name = "", _email = "", _phone = "", _location = "", _cv = "";
+  bool isEmail = false, isPhone = false;
 
-  File? _pdfFile; // To store the selected PDF file
-
-  // Function to pick a PDF file and check its size
-  Future<void> pickPdfFile() async {
-    // Open file picker to select PDF
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['pdf'],
-    );
-
-    if (result != null) {
-      File file = File(result.files.single.path!);
-
-      // Check if the file size is less than 2MB
-      int fileSize = await file.length();
-      if (fileSize <= 2 * 1024 * 1024) {  // 2MB in bytes
-        setState(() {
-          _pdfFile = file;
-        });
-      } else {
-        // Show a dialog or toast to inform the user
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            title: Text("File too large"),
-            content: Text("The selected file exceeds the 2MB limit."),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text("OK"),
-              ),
-            ],
-          ),
-        );
-      }
-    }
+  void _onName(String name) {
+    setState(() {
+      _name = name;
+    });
+  }
+  void _onEmail(String email) {
+    setState(() {
+      _email = email;
+      isEmail = Validation.email(email: email);
+    });
+  }
+  void _onPhone(String phone) {
+    setState(() {
+      _phone = phone;
+      isPhone = Validation.phone(phone: _phone);
+    });
+  }
+  void _onLocation(String location) {
+    setState(() {
+      _location = location;
+    });
+  }
+  void _onCv(String cv) {
+    setState(() {
+      _cv = cv;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xfff2f4f5),
       appBar: AppBar(
         backgroundColor: Color(0xffF2F6FB), //Colors.white,
         leading: GestureDetector(
@@ -79,40 +71,69 @@ class _ApplyJobState extends ConsumerState<ApplyJob> {
             child: Center(child: Icon(Icons.arrow_back, color: Colors.black, size: 20)),
           ),
         ),
+        title: Text("Apply Now", style: TextStyle(color: Color(0xff188273), fontSize: 22, fontWeight: FontWeight.bold)),
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 30),
           child: Column(
             children: [
-              ElevatedButton(
-                onPressed: pickPdfFile,
-                child: Text("Upload CV in PDF Format"),
-              ),
-              SizedBox(height: 20),
-              // If a PDF is selected, show it in a container
-              _pdfFile != null ? Container(
-                height: 400,
-                child: PDFView(
-                  filePath: _pdfFile?.path,
-                ),
-              ) : Container(
-                height: 400,
-                color: Colors.grey[300],  // Placeholder
-                child: Center(
-                  child: Text("No PDF selected"),
+              SizedBox(
+                height: 60,
+                child: JobField(
+                    hintText: "Name", onSubmittedValue: _onName, icon: Icon(Icons.person, size: 24)
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 16.74),
+              SizedBox(
+                height: 60,
+                child: JobField(
+                    hintText: "Email", onSubmittedValue: _onEmail, icon: Icon(Icons.email_outlined, size: 24)
+                ),
+              ),
+              const SizedBox(height: 16.74),
+              SizedBox(
+                height: 60,
+                child: JobField(
+                    hintText: "Phone", onSubmittedValue: _onPhone, icon: Icon(Icons.phone, size: 24)
+                ),
+              ),
+              const SizedBox(height: 16.74),
+              SizedBox(
+                height: 60,
+                child: JobField(
+                    hintText: "Address", onSubmittedValue: _onLocation, icon: Icon(Icons.location_on_outlined, size: 24)
+                ),
+              ),
+              const SizedBox(height: 16.74),
+              SizedBox(
+                height: 60,
+                child: JobField(
+                    hintText: "Attach CV Link", onSubmittedValue: _onCv, icon: Icon(Icons.file_copy_outlined, size: 24)
+                ),
+              ),
+              SizedBox(height: 50),
               GestureDetector(
-                onTap: (){
-                  if (_pdfFile == null){
-                    Toast.showToast(context: context, message: "Please Upload your CV in Pdf format!", isWarning: true);
+                onTap: () async {
+                  if (_name.length < 3){
+                    Toast.showToast(context: context, message: "Name at least consists 3 characters!", isWarning: true);
+                  } else if (!isEmail){
+                    Toast.showToast(context: context, message: "Invalid email Address!", isWarning: true);
+                  } else if (!isPhone){
+                    Toast.showToast(context: context, message: "Invalid phone number!", isWarning: true);
+                  } if (_location.length < 4){
+                    Toast.showToast(context: context, message: "Address at least consists 4 characters!", isWarning: true);
+                  } if (_cv.length < 10){
+                    Toast.showToast(context: context, message: "CV link at least consists 10 characters!", isWarning: true);
                   } else {
-                    
+                    bool isApply = await ref.read(applyProvider.notifier).insertApply(name: _name, email: _email, address: _location, cv: _cv, phone: _phone, jobId: widget.jobId);
+                    if (isApply){
+                      Navigator.of(context).pop();
+                      Toast.showToast(context: context, message: "Apply done successfully!");
+                    }
                   }
                 },
-                child: CustomContainer(fntWeight: FontWeight.w600, fntSize: 16, txt: "Submit", containerColor: Color(0xff188273), containerWidth: MediaQuery.of(context).size.width - 30, containerHeight: 50),
+                child: Center(child: CustomContainer(status: ref.watch(applyProvider).isLoading? true : false, fntWeight: FontWeight.w600, fntSize: 16, txt: "Submit", containerColor: Color(0xff188273), containerWidth: MediaQuery.of(context).size.width - 30, containerHeight: 50)),
               )
             ],
           ),
