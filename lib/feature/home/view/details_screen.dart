@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hirely/core/service/auth_controller.dart';
 import 'package:hirely/core/service/auth_service.dart';
 import 'package:hirely/feature/home/view/apply_job.dart';
 
@@ -68,7 +69,7 @@ class _DetailsScreenState extends ConsumerState<DetailsScreen> {
                 ],
               ),
               SizedBox(height: 20),
-              if (AuthService().getCurrentUserRole() != true)
+              if (ref.watch(authProvider).role != true)
                 GestureDetector(
                   onTap: (){
                     Navigator.push(context, MaterialPageRoute(builder: (context) => ApplyJob(jobId: home.id!)));

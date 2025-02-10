@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hirely/core/service/auth_service.dart';
 import 'package:hirely/feature/profile/view_model/user_generics.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../core/service/auth_service.dart';
 import '../model/user_model.dart';
 
 final userProvider = StateNotifierProvider<UserController, UserGenerics> ((ref) => UserController());
@@ -12,13 +12,12 @@ final userProvider = StateNotifierProvider<UserController, UserGenerics> ((ref) 
 class UserController extends StateNotifier<UserGenerics> {
   UserController() : super(UserGenerics());
 
-  final SupabaseClient supabase = Supabase.instance.client;
-  final authService = AuthService();
+  final SupabaseClient authService = Supabase.instance.client;
 
   Future<void> userInitialize() async {
     state = state.update(isLoading: true);
     try {
-      final data = await supabase.from('users').select().eq('email', authService.getCurrentUserEmail().toString()).single();
+      final data = await authService.from('users').select().eq('email', userEmail!).single();
       UserModel user = UserModel.fromMap(data);
       state = state.update(isLoading: false, newUser: user);
 
@@ -45,7 +44,7 @@ class UserController extends StateNotifier<UserGenerics> {
       final String fileName = '${DateTime.now().millisecondsSinceEpoch}.png';
 
       try {
-        imgUrl = await supabase.storage.from('images').upload(fileName, imgFile);
+        imgUrl = await authService.storage.from('images').upload(fileName, imgFile);
       } catch (e) {
         if (kDebugMode) {
           print(e);
@@ -55,13 +54,13 @@ class UserController extends StateNotifier<UserGenerics> {
       }
     }
 
-    UserModel user = UserModel(email: authService.getCurrentUserEmail().toString(), name: name, phone: phone, imgUrl: imgUrl, bio: bio, address: address);
+    UserModel user = UserModel(email: userEmail, name: name, phone: phone, imgUrl: imgUrl, bio: bio, address: address);
     try {
       late final response;
       if (state.users != null && state.users!.imgUrl!.isNotEmpty){
-        response = await supabase.from('users').update(user.toJson()).eq('email', authService.getCurrentUserEmail().toString());
+        response = await authService.from('users').update(user.toJson()).eq('email', userEmail!);
       } else {
-        response = await supabase.from('users').upsert(user.toJson()).eq('email', authService.getCurrentUserEmail().toString());
+        response = await authService.from('users').upsert(user.toJson()).eq('email', userEmail!);
       }
       await userInitialize();
 
@@ -83,7 +82,7 @@ class UserController extends StateNotifier<UserGenerics> {
     state = state.update(isLoading: true);
     UserModel user = UserModel(email: email, name: name, phone: phone, imgUrl: "", bio: "", address: "");
     try {
-      final response = await supabase.from('users').insert({user.toJson()});
+      final response = await authService.from('users').insert({user.toJson()});
 
       await userInitialize();
 

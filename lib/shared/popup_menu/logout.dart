@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hirely/core/service/auth_service.dart';
+import 'package:hirely/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/extentions/image_path.dart';
 import '../../feature/auth/login/view/login_screen.dart';
@@ -24,8 +26,15 @@ class _LogoutState extends State<Logout> {
       ),
       onSelected: (value) async {
         if (value == 1){
+          setState(() {
+            userEmail = null;
+            userRole = null;
+          });
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.remove('email');
+          await prefs.remove('role');
           Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoginScreen()));
-          await AuthService().signOUt();
+          await AuthServices().logout();
         }
         if (kDebugMode) {
           print("Selected: $value");

@@ -1,8 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hirely/core/service/auth_controller.dart';
 import 'package:hirely/feature/dashboard/view/recruiter/recruiter_dashboard.dart';
 import 'package:hirely/feature/dashboard/view/talent/talent_dashboard.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/extentions/image_path.dart';
 import '../../../../core/service/auth_service.dart';
 import '../../../../core/validation/validation.dart';
@@ -87,34 +90,42 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         isWarning: true);
                   } else {
                     try {
-                      final response = await AuthService().signInWIthEmailPassword(_email, _password);
-                      if (kDebugMode) {
-                        print("Login response = ${response.user!.userMetadata!['role']}");
-                      }
-                      if (AuthService().getCurrentUserRole() == true){
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (context) => const RecruiterDashboard(),
-                          ),
-                        );
-                        Toast.showToast(context: context, message: "Successfully Login");
-                      } else {
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (context) => const TalentDashboard(),
-                          ),
-                        );
-                        Toast.showToast(context: context, message: "Successfully Login");
+                      AuthServices authServices = AuthServices();
+                      // Await the login result
+                      final UserCredential credential = await authServices.login(_email, _password);
+                      User? user = credential.user;
+                      if (user != null) {
+                        setState(() {
+                          userEmail = user.email;
+                        });
+
+                        // Check if the email is verified
+                        if (user.emailVerified) {
+                          if (kDebugMode) {
+                            print("User email: ${user.email}");
+                          }
+                          await ref.read(authProvider.notifier).authInitialize(email: user.email!);
+                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                          await prefs.setString('email', ref.watch(authProvider).email!);
+                          await prefs.setBool('role', ref.watch(authProvider).role!);
+                          if (ref.watch(authProvider).role != null && ref.watch(authProvider).role == true) {
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => RecruiterDashboard()));
+                          } else {
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TalentDashboard()));
+                          }
+                        } else {
+                          // If email is not verified, send the verification email and notify the user
+                          await user.sendEmailVerification();
+                          Toast.showToast(context: context, message: "A verification link is sent to $_email. Verify your account to login");
+                        }
                       }
                     } catch (e) {
-                      Toast.showToast(context: context, message: "e", isWarning: true);
+                      AuthServices().logout();
+                      Toast.showToast(context: context, message: "Server Error! $e}");
                       if (kDebugMode) {
-                        print("Login: $e");
+                        print("Login Button Working, $isEmail $isPassword $e");
                       }
                     }
-                  }
-                  if (kDebugMode) {
-                    print("Login Button Working, $isEmail $isPassword ");
                   }
                 },
                 child: const CustomButton(
@@ -133,16 +144,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     children: [
                       const Text("Don't have an account? ", style: TextStyle(fontSize: 12.56, fontWeight: FontWeight.w400)),
                       GestureDetector(
-                          onTap: (){
-                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SignupScreen()));
-                          },
-                          child: const Text("Sign Up", style: TextStyle(fontSize: 12.56, fontWeight: FontWeight.bold, color: Color(0xff188273)))
+                        onTap: (){
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SignupScreen()));
+                        },
+                        child: const Text("Sign Up", style: TextStyle(fontSize: 12.56, fontWeight: FontWeight.bold, color: Color(0xff188273)))
                       ),
                     ],
                   ),
-                  GestureDetector(
-                      onTap: (){
-
+                  GestureDetector (
+                      onTap: () async {
+                        await AuthServices().resetPassword(_email);
+                        Toast.showToast(context: context, message: "A password reset link is sent to your email");
                       },
                       child: Text("Forget Password?", style: TextStyle(fontSize: 12.56, fontWeight: FontWeight.w400))
                   ),

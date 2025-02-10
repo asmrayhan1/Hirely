@@ -1,16 +1,19 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hirely/feature/auth/login/view/login_screen.dart';
 import 'package:hirely/feature/dashboard/view/recruiter/recruiter_dashboard.dart';
 import 'package:hirely/feature/dashboard/view/talent/talent_dashboard.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/service/auth_service.dart';
-
+bool? userRole;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  userEmail = prefs.getString('email');
+  userRole = prefs.getBool('role');
   await Firebase.initializeApp();
   await Supabase.initialize(
       url: 'https://cldryweohlzpfeteqesz.supabase.co',
@@ -26,7 +29,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: (AuthService().getCurrentUserEmail() != null? (AuthService().getCurrentUserRole() == true ? RecruiterDashboard() : TalentDashboard()) : LoginScreen()),
+      home: (userEmail != null? (userRole == true ? RecruiterDashboard() : TalentDashboard()) : LoginScreen()),
     );
   }
 }

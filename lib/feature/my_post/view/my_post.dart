@@ -20,7 +20,7 @@ class _MyPostState extends ConsumerState<MyPost> {
   Widget build(BuildContext context) {
     List<JobModel> myPost = [];
     List<int> indx = [];
-    String email = AuthService().getCurrentUserEmail().toString();
+    String email = userEmail!;
     final jobList = ref.watch(jobProvider).jobs;
     for (int i = 0; i < jobList!.length; i++){
       if (jobList[i].email == email){

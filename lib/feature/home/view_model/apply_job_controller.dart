@@ -10,13 +10,12 @@ final applyProvider = StateNotifierProvider<JobApplyController, JobApplyGenerics
 class JobApplyController extends StateNotifier<JobApplyGenerics> {
   JobApplyController() : super(JobApplyGenerics());
 
-  final SupabaseClient supabase = Supabase.instance.client;
-  final authService = AuthService();
+  final SupabaseClient authService = Supabase.instance.client;
 
   Future<void> applyInitialize() async {
     state = state.update(isLoading: true);
     try {
-      final data = await supabase.from('apply').select();
+      final data = await authService.from('apply').select();
 
       // Convert each record (Map<String, dynamic>) to JobApplyModel
       List<JobApplyModel> tmpApply = data.map<JobApplyModel>((e) {
@@ -41,7 +40,7 @@ class JobApplyController extends StateNotifier<JobApplyGenerics> {
 
     state = state.update(isLoading: true);
     try {
-      final response = await supabase.from('apply').insert(
+      final response = await authService.from('apply').insert(
           {
             'email': email,
             'name': name,

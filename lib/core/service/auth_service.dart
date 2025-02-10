@@ -1,38 +1,51 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
+ String? userEmail;
 
-class AuthService {
-  final SupabaseClient _supabase = Supabase.instance.client;
+class AuthServices {
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-  Future<AuthResponse> signInWIthEmailPassword (String email, String password) async {
-    return await _supabase.auth.signInWithPassword(
-        password: password,
-        email: email
-    );
-  }
-
-  Future<AuthResponse> signUpWIthEmailPassword (bool role, String email, String password) async {
-    return await _supabase.auth.signUp(
+  Future<void> signUp(String email, String password) async {
+    try {
+      final userData = await firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password,
-        data: {
-          'role' : role
-        },
+      );
+      await userData.user!.sendEmailVerification();
+    } on FirebaseAuthException catch (e) {
+      if (kDebugMode) {
+        print(e.message!);
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
+  }
+
+  Future<UserCredential> login(String email, String password) async {
+    return await firebaseAuth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
     );
   }
 
-  Future<void> signOUt() async {
-    await _supabase.auth.signOut();
+  Future<void> resetPassword(String email) async {
+    try {
+      await firebaseAuth.sendPasswordResetEmail(email: email).whenComplete(() {
+        if (kDebugMode) {
+          print("A link is sent to your email.Please check your email "
+            "inbox and spam.");
+        }
+      });
+    } on FirebaseException catch (e) {
+      if (kDebugMode) {
+        print(e.message!);
+      }
+    }
   }
 
-  String? getCurrentUserEmail(){
-    final session = _supabase.auth.currentSession;
-    final user = session?.user;
-    return user?.email;
-  }
-
-  bool? getCurrentUserRole(){
-    final session = _supabase.auth.currentSession;
-    final user = session?.user.userMetadata!['role'];
-    return user;
+  Future<void> logout() async {
+    await firebaseAuth.signOut();
   }
 }

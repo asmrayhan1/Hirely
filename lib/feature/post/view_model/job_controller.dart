@@ -14,13 +14,12 @@ final jobProvider = StateNotifierProvider<JobController, JobGenerics> ((ref) => 
 class JobController extends StateNotifier<JobGenerics> {
   JobController() : super(JobGenerics());
 
-  final SupabaseClient supabase = Supabase.instance.client;
-  final authService = AuthService();
+  final SupabaseClient authService = Supabase.instance.client;
 
   Future<void> jobInitialize() async {
     state = state.update(isLoading: true);
     try {
-      final data = await supabase.from('job').select();
+      final data = await authService.from('job').select();
 
       // Convert each record (Map<String, dynamic>) to JobModel
       List<JobModel> tmpJobs = data.map<JobModel>((e) {
@@ -45,9 +44,9 @@ class JobController extends StateNotifier<JobGenerics> {
 
     state = state.update(isLoading: true);
     try {
-      final response = await supabase.from('job').insert(
+      final response = await authService.from('job').insert(
           {
-            'email': authService.getCurrentUserEmail().toString(),
+            'email': userEmail,
             'title': title,
             'about': about,
             'requirement': requirement,
@@ -78,11 +77,11 @@ class JobController extends StateNotifier<JobGenerics> {
     state = state.update(isLoading: true);
 
     JobModel updateJob = JobModel(
-        id: id, email: authService.getCurrentUserEmail().toString(), title: title, about: about,
+        id: id, email: userEmail!, title: title, about: about,
         requirement: requirement, salary: salary, userName: userName, img: img
     );
     try {
-      final response = await supabase.from('job').update(updateJob.toMap()).eq('id', id);
+      final response = await authService.from('job').update(updateJob.toMap()).eq('id', id);
 
       await jobInitialize();
 
@@ -103,7 +102,7 @@ class JobController extends StateNotifier<JobGenerics> {
   Future<bool> deleteJob({required int id}) async {
     state = state.update(isLoading: true);
     try {
-      final data = await supabase.from('job').delete().eq('id', id);
+      final data = await authService.from('job').delete().eq('id', id);
       if (kDebugMode) {
         print(data);
       }

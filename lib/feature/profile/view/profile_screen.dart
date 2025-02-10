@@ -180,7 +180,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       padding: const EdgeInsets.only(right: 10.0),
                       child: Column(
                         children: [
-                          Text("Email: ${AuthService().getCurrentUserEmail()}", maxLines: 2,
+                          Text("Email: $userEmail", maxLines: 2,
                               style: const TextStyle(
                                   fontSize: 14, fontWeight: FontWeight.w400, color: Color(0xFF344054))),
                         ],

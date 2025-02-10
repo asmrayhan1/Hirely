@@ -1,9 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hirely/core/service/auth_controller.dart';
 import 'package:hirely/core/service/auth_service.dart';
-import 'package:hirely/feature/dashboard/view/recruiter/recruiter_dashboard.dart';
-import 'package:hirely/feature/dashboard/view/talent/talent_dashboard.dart';
 import '../../../../core/extentions/image_path.dart';
 import '../../../../core/validation/validation.dart';
 import '../../../../shared/containers/custom_button.dart';
@@ -133,28 +132,16 @@ class _SignUpState extends ConsumerState<SignupScreen> {
                     Toast.showToast(context: context, message: "Please select your role!", isWarning: true);
                   } else {
                     try {
-                      final response = await AuthService().signUpWIthEmailPassword(isClicked1, _email, _password);
-                      Toast.showToast(context: context, message: "Registered Successfully!");
-                      if (AuthService().getCurrentUserRole() == true) {
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (context) => const RecruiterDashboard(),
-                          ),
-                        );
-                        Toast.showToast(context: context, message: "Successfully Login");
-                      } else {
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (context) => const TalentDashboard(),
-                          ),
-                        );
-                        Toast.showToast(context: context, message: "Successfully Login");
-                      }
+                      await ref.read(authProvider.notifier).insertUser(email: _email, role: isClicked1);
+                      AuthServices authServices = AuthServices();
+                      await authServices.signUp(_email, _password);
+                      Toast.showToast(context: context, message: "A verification link is sent to $_email. Verify your account to login");
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
                     } catch (e) {
                       if (kDebugMode) {
                         print(e);
                       }
-                      Toast.showToast(context: context, message: "Please provide valid information!", isWarning: true);
+                      Toast.showToast(context: context, message: "$e", isWarning: true);
                     }
                   }
                   if (kDebugMode) {
