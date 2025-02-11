@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hirely/feature/post/view_model/job_controller.dart';
 import 'package:hirely/feature/profile/view_model/user_controller.dart';
 import '../../../core/extentions/image_path.dart';
-import '../../../core/service/auth_service.dart';
 import '../../../shared/containers/custom_container.dart';
 import '../../../shared/containers/custom_image.dart';
 import '../../../shared/widgets/utils/toast.dart';

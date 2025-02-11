@@ -63,6 +63,9 @@ class _CustomFieldState extends State<CustomField> {
         ),
         contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
       ),
+      onChanged: (text){
+        widget.onSubmittedValue(widget.controller.text.trim(), widget.context);
+      },
     );
   }
 }

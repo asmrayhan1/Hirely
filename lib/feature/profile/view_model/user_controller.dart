@@ -12,6 +12,12 @@ final userProvider = StateNotifierProvider<UserController, UserGenerics> ((ref) 
 class UserController extends StateNotifier<UserGenerics> {
   UserController() : super(UserGenerics());
 
+  // @override
+  // void dispose() {
+  //   // TODO: implement dispose
+  //   super.dispose();
+  // }
+
   final SupabaseClient authService = Supabase.instance.client;
 
   Future<void> userInitialize() async {

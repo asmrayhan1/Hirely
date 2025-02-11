@@ -86,7 +86,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         isWarning: true);
                   } else if (!isPassword) {
                     Toast.showToast(context: context,
-                        message: "Invalid Password!",
+                        message: "At least 6 length & 1 special,digit,small,capital character!",
                         isWarning: true);
                   } else {
                     try {

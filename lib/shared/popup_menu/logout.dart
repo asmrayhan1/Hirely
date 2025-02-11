@@ -1,21 +1,25 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hirely/core/service/auth_controller.dart';
 import 'package:hirely/core/service/auth_service.dart';
+import 'package:hirely/feature/home/view_model/apply_job_controller.dart';
+import 'package:hirely/feature/post/view_model/job_controller.dart';
+import 'package:hirely/feature/profile/view_model/user_controller.dart';
 import 'package:hirely/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../core/extentions/image_path.dart';
 import '../../feature/auth/login/view/login_screen.dart';
 import '../containers/custom_image.dart';
 
-class Logout extends StatefulWidget {
+class Logout extends ConsumerStatefulWidget {
   const Logout({super.key});
 
   @override
-  State<Logout> createState() => _LogoutState();
+  ConsumerState<Logout> createState() => _LogoutState();
 }
 
-class _LogoutState extends State<Logout> {
+class _LogoutState extends ConsumerState<Logout> {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<int>(
@@ -33,6 +37,10 @@ class _LogoutState extends State<Logout> {
           final prefs = await SharedPreferences.getInstance();
           await prefs.remove('email');
           await prefs.remove('role');
+          ref.invalidate(userProvider);
+          ref.invalidate(jobProvider);
+          ref.invalidate(applyProvider);
+          ref.invalidate(authProvider);
           Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoginScreen()));
           await AuthServices().logout();
         }

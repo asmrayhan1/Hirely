@@ -178,13 +178,13 @@ class _EditInfoScreenState extends ConsumerState<EditInfoScreen> {
                   child: GestureDetector(
                       onTap: () async {
                         if (!isName) {
-                          Toast.showToast(context: context, message: "invalid Name!", isWarning: true);
+                          Toast.showToast(context: context, message: "invalid Name, at least 3 characters!", isWarning: true);
                         } else if (!isBio){
-                          Toast.showToast(context: context, message: "Invalid Bio!", isWarning: true);
+                          Toast.showToast(context: context, message: "Invalid Bio, 5-25 characters!!", isWarning: true);
                         } else if (!isPhone){
                           Toast.showToast(context: context, message: "Invalid Phone Number!", isWarning: true);
                         } else if (!isAddress){
-                          Toast.showToast(context: context, message: "Invalid Address!", isWarning: true);
+                          Toast.showToast(context: context, message: "Invalid Address, at least 5 characters!", isWarning: true);
                         } else {
                           bool isUpdated = await ref.read(userProvider.notifier).updateUser(name: _name, phone: _phone, bio: _bio, imgFile: _image, address: _address);
                           if (isUpdated){

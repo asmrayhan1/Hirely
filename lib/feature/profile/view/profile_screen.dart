@@ -111,7 +111,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     Icon(Icons.calendar_month),
                     SizedBox(width: 12),
                     Text(
-                      user.users == null ? "See unknown user's Calender" : "See ${user.users!.name}'s Calender",
+                      user.users == null ? "Unknown user's Calender" : "${user.users!.name}'s Calender",
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,

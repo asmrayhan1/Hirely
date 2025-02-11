@@ -121,9 +121,9 @@ class _ApplyJobState extends ConsumerState<ApplyJob> {
                     Toast.showToast(context: context, message: "Invalid email Address!", isWarning: true);
                   } else if (!isPhone){
                     Toast.showToast(context: context, message: "Invalid phone number!", isWarning: true);
-                  } if (_location.length < 4){
+                  } else if (_location.length < 4){
                     Toast.showToast(context: context, message: "Address at least consists 4 characters!", isWarning: true);
-                  } if (_cv.length < 10){
+                  } else if (_cv.length < 10){
                     Toast.showToast(context: context, message: "CV link at least consists 10 characters!", isWarning: true);
                   } else {
                     bool isApply = await ref.read(applyProvider.notifier).insertApply(name: _name, email: _email, address: _location, cv: _cv, phone: _phone, jobId: widget.jobId);

@@ -66,6 +66,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
         ),
         contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 25),
       ),
+      onChanged: (text){
+        widget.onSubmittedValue(_textController.text.trim(), widget.context);
+      },
     );
   }
 }

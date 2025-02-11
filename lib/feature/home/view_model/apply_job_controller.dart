@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hirely/feature/home/view_model/apply_job_generics.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../core/service/auth_service.dart';
 import '../model/apply_job_model.dart';
 
 final applyProvider = StateNotifierProvider<JobApplyController, JobApplyGenerics> ((ref) => JobApplyController());

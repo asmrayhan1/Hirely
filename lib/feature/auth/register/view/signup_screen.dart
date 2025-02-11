@@ -123,9 +123,9 @@ class _SignUpState extends ConsumerState<SignupScreen> {
                   if (!isEmail){
                     Toast.showToast(context: context, message: "Invalid Email format!", isWarning: true);
                   } else if (!isPassword){
-                    Toast.showToast(context: context, message: "Password at least contains 6 characters!", isWarning: true);
+                    Toast.showToast(context: context, message: "At least 6 length & 1 special,digit,small,capital character!", isWarning: true);
                   } else if (!isConfirmPassword){
-                    Toast.showToast(context: context, message: "Password at least contains 6 characters!", isWarning: true);
+                    Toast.showToast(context: context, message: "At least 6 length & 1 special,digit,small,capital character!", isWarning: true);
                   } else if (_password != _confirmPassword){
                     Toast.showToast(context: context, message: "Password & Confirmed Password not matched!", isWarning: true);
                   } else if (!isClicked1 && !isClicked2){

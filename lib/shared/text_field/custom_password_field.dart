@@ -80,6 +80,9 @@ class _CustomPasswordFieldState extends State<CustomPasswordField> {
         ),
         contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 25),
       ),
+      onChanged: (text){
+        widget.onSubmittedValue(_passwordController.text.trim(), widget.context);
+      },
     );
   }
 }
