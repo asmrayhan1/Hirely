@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hirely/feature/post/view_model/job_controller.dart';
 import 'package:hirely/feature/profile/view_model/user_controller.dart';
 import '../../../core/extentions/image_path.dart';
+import '../../../core/service/auth_service.dart';
 import '../../../shared/containers/custom_container.dart';
 import '../../../shared/containers/custom_image.dart';
 import '../../../shared/widgets/utils/toast.dart';
@@ -112,12 +113,25 @@ class _CreatePostState extends ConsumerState<CreatePost> {
                           } else if (_salary.isEmpty){
                             Toast.showToast(context: context, message: "Salary field can't empty!", isWarning: true);
                           } else {
-                            bool isInserted = await ref.read(jobProvider.notifier).insertJob(title: _title, about: _about, requirement: _requirements, salary: _title, userName: user!.name!, img: user.imgUrl!);
-                          if (isInserted){
-                              Toast.showToast(context: context, message: "Post Successfully Added!");
-                              _resetForm();
+                            if (user?.imgUrl != null) {
+                              bool isInserted = await ref.read(
+                                  jobProvider.notifier).insertJob(title: _title,
+                                  about: _about,
+                                  requirement: _requirements,
+                                  salary: _title,
+                                  userName: user!.name!,
+                                  img: user.imgUrl!);
+                              if (isInserted) {
+                                Toast.showToast(context: context,
+                                    message: "Post Successfully Added!");
+                                _resetForm();
+                              } else {
+                                Toast.showToast(context: context,
+                                    message: "Server Error, Try again later!",
+                                    isWarning: true);
+                              }
                             } else {
-                              Toast.showToast(context: context, message: "Server Error, Try again later!", isWarning: true);
+                              Toast.showToast(context: context, message: "Please Fill your Profile", isWarning: true);
                             }
                           }
                         },
