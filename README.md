@@ -1,16 +1,26 @@
-# hirely
+# Hirely – Mobile Job Recruitment Application
 
-A new Flutter project.
+Hirely is a cross-platform mobile job recruitment application designed to connect recruiters and job seekers through a seamless and user-friendly platform. The application allows recruiters to post and manage job opportunities while enabling job seekers to browse listings and apply directly through the app.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- User authentication and secure login system
+- Recruiter job posting and management
+- Job browsing and search functionality
+- User profile management
+- Job application tracking
+- Clean and intuitive user interface
 
-A few resources to get you started if this is your first Flutter project:
+## Tech Stack
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- **Flutter** – Mobile app development
+- **Supabase** – Backend services and database
+- **Firebase** – Authentication and additional services
+- **Dart** – Programming language
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Installation
+
+1. Clone the repository
+
+```bash
+git clone https://github.com/asmrayhan1/Hirely.git
